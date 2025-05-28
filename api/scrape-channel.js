@@ -1,48 +1,115 @@
 export default async function handler(req, res) {
   try {
-    // Method 1: Try to scrape the public channel page
-    const channelUrl = 'https://t.me/s/pumpfunvolumereports';
+    // For now, let's simulate the data based on your message format
+    // This will help us build the full dashboard while we work on the real data connection
     
-    const response = await fetch(channelUrl, {
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'
+    const sampleVolumeData = {
+      // Latest report from your message
+      current: {
+        totalTrades: 34450,
+        newCoins: 1257,
+        totalVolume: 14629.24,
+        buyVolume: 8081.8,
+        sellVolume: 6547.44,
+        totalBuys: 17536,
+        totalSells: 16914,
+        reachedKOTH: 44,
+        fullyBonded: 19,
+        timestamp: new Date().toISOString()
+      },
+      // Previous report for comparison
+      previous: {
+        totalTrades: 32533,
+        newCoins: 1359,
+        totalVolume: 12946.51,
+        buyVolume: 7160.86,
+        sellVolume: 5785.65,
+        totalBuys: 16744,
+        totalSells: 15789,
+        reachedKOTH: 27,
+        fullyBonded: 8
+      },
+      // Calculate changes
+      changes: {
+        totalTrades: "+5.89%",
+        newCoins: "-7.51%",
+        totalVolume: "+13.00%",
+        buyVolume: "+12.86%",
+        sellVolume: "+13.17%",
+        totalBuys: "+4.73%",
+        totalSells: "+7.13%",
+        reachedKOTH: "+62.96%",
+        fullyBonded: "+137.50%"
       }
-    });
+    };
 
-    if (!response.ok) {
-      throw new Error(`Failed to fetch channel: ${response.status}`);
+    // TODO: Replace this with real scraping once we figure out the exact method
+    // For debugging, let's also try some alternative approaches
+    
+    let scrapingAttempts = [];
+    
+    // Method 1: Try RSS feed
+    try {
+      const rssUrl = 'https://rsshub.app/telegram/channel/pumpfunvolumereports';
+      const rssResponse = await fetch(rssUrl);
+      scrapingAttempts.push({
+        method: 'RSS Feed',
+        status: rssResponse.ok ? 'Success' : 'Failed',
+        statusCode: rssResponse.status
+      });
+    } catch (e) {
+      scrapingAttempts.push({
+        method: 'RSS Feed',
+        status: 'Error',
+        error: e.message
+      });
     }
 
-    const html = await response.text();
-    
-    // Look for volume report messages in the HTML
-    const messages = extractMessagesFromHTML(html);
-    const volumeReports = messages.filter(msg => 
-      msg.toLowerCase().includes('pump volume report') || 
-      msg.toLowerCase().includes('total volume')
-    );
-
-    let latestVolumeData = null;
-    if (volumeReports.length > 0) {
-      latestVolumeData = parseVolumeReport(volumeReports[0]);
+    // Method 2: Try different scraping approach
+    try {
+      const channelUrl = 'https://t.me/s/pumpfunvolumereports';
+      const response = await fetch(channelUrl, {
+        headers: {
+          'User-Agent': 'Mozilla/5.0 (compatible; DataBot/1.0)'
+        }
+      });
+      
+      if (response.ok) {
+        const html = await response.text();
+        const hasVolumeText = html.includes('Volume Report') || html.includes('SOL');
+        scrapingAttempts.push({
+          method: 'Direct Scraping',
+          status: 'Success',
+          foundVolumeText: hasVolumeText,
+          htmlLength: html.length
+        });
+      }
+    } catch (e) {
+      scrapingAttempts.push({
+        method: 'Direct Scraping',
+        status: 'Error',
+        error: e.message
+      });
     }
 
     return res.status(200).json({
       status: "success",
-      method: "web-scraping",
-      channelUrl: channelUrl,
-      messagesFound: messages.length,
-      volumeReportsFound: volumeReports.length,
-      latestReport: volumeReports[0] || null,
-      parsedData: latestVolumeData,
+      dataSource: "sample_data_from_your_messages",
+      volumeData: sampleVolumeData,
+      scrapingAttempts: scrapingAttempts,
+      nextSteps: [
+        "1. Use this sample data to build the full dashboard",
+        "2. Test all dashboard features with real-looking data", 
+        "3. Work on reliable data fetching method",
+        "4. Possible solutions: RSS feed, webhook, or manual API"
+      ],
       lastUpdate: new Date().toISOString()
     });
 
   } catch (error) {
     return res.status(500).json({
       error: error.message,
-      status: "failed",
-      method: "web-scraping"
+      status: "failed"
     });
   }
 }
