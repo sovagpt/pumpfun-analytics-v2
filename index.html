@@ -67,6 +67,7 @@
             <button class="test-btn" onclick="testAPI()">Test API Connection</button>
             <button class="test-btn" onclick="testTelegram()">Test Telegram Bot</button>
             <button class="test-btn" onclick="testData()">Test Live Data</button>
+            <button class="test-btn" onclick="testScraper()">Test Web Scraper</button>
         </div>
 
         <div id="results"></div>
@@ -115,6 +116,24 @@
                 }
             } catch (error) {
                 addResult('❌ Data Failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testScraper() {
+            addResult('Testing web scraper...', 'info');
+            try {
+                const response = await fetch('/api/scrape-channel');
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('✅ Scraper Working - Found ' + data.messagesFound + ' messages, ' + data.volumeReportsFound + ' volume reports', 'success');
+                    if (data.parsedData) {
+                        addResult('📊 Volume Data: ' + JSON.stringify(data.parsedData), 'success');
+                    }
+                } else {
+                    addResult('❌ Scraper Error: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Scraper Failed: ' + error.message, 'error');
             }
         }
 
