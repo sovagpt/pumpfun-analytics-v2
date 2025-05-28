@@ -3,491 +3,152 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pump.fun Volume Analytics</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <title>Pump.fun Analytics - Fresh Start</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: Arial, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
+            color: white;
+            margin: 0;
+            padding: 20px;
             min-height: 100vh;
         }
-
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
-            padding: 20px;
+            text-align: center;
         }
-
         .header {
-            text-align: center;
             margin-bottom: 40px;
+        }
+        .status {
+            background: rgba(255,255,255,0.1);
             padding: 20px;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            margin: 20px 0;
         }
-
-        .header h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            background: linear-gradient(45deg, #ff6b6b, #4ecdc4);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .status-indicator {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-            margin-top: 15px;
-            font-size: 0.9rem;
-        }
-
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background-color: #4ecdc4;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0% { opacity: 1; }
-            50% { opacity: 0.5; }
-            100% { opacity: 1; }
-        }
-
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .stat-title {
-            font-size: 0.9rem;
-            opacity: 0.8;
-            margin-bottom: 8px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        .stat-value {
-            font-size: 1.8rem;
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .stat-change {
-            font-size: 0.9rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .positive { color: #4ecdc4; }
-        .negative { color: #ff6b6b; }
-
-        .charts-section {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 20px;
-            margin-bottom: 40px;
-        }
-
-        .chart-container {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 25px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .chart-title {
-            font-size: 1.2rem;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .ai-terminal {
-            background: rgba(0, 0, 0, 0.8);
-            border-radius: 15px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            overflow: hidden;
-            margin-top: 20px;
-        }
-
-        .terminal-header {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 15px 20px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .terminal-dots {
-            display: flex;
-            gap: 8px;
-        }
-
-        .dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-        }
-
-        .dot.red { background-color: #ff5f56; }
-        .dot.yellow { background-color: #ffbd2e; }
-        .dot.green { background-color: #27ca3f; }
-
-        .terminal-title {
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            margin-left: 10px;
-        }
-
-        .terminal-body {
-            padding: 20px;
-            height: 400px;
-            overflow-y: auto;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            line-height: 1.6;
-        }
-
-        .terminal-output {
-            margin-bottom: 15px;
-        }
-
-        .terminal-prompt {
-            color: #4ecdc4;
-        }
-
-        .terminal-input-container {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-top: 15px;
-            padding: 0 20px 20px;
-        }
-
-        .terminal-input {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: #fff;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            outline: none;
-            padding: 8px;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .send-btn {
-            background: linear-gradient(45deg, #4ecdc4, #44a08d);
-            border: none;
+        .test-btn {
+            background: #4ecdc4;
             color: white;
-            padding: 8px 15px;
-            border-radius: 5px;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 8px;
             cursor: pointer;
-            font-family: 'Courier New', monospace;
-            transition: opacity 0.3s ease;
+            font-size: 16px;
+            margin: 10px;
         }
-
-        .send-btn:hover { opacity: 0.8; }
-        .send-btn:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .last-update {
-            text-align: center;
-            margin-bottom: 20px;
+        .test-btn:hover {
             opacity: 0.8;
-            font-size: 0.9rem;
         }
-
-        @media (max-width: 768px) {
-            .charts-section { grid-template-columns: 1fr; }
-            .header h1 { font-size: 2rem; }
+        .result {
+            background: rgba(0,0,0,0.3);
+            padding: 15px;
+            border-radius: 8px;
+            margin: 10px 0;
+            text-align: left;
         }
+        .error { color: #ff6b6b; }
+        .success { color: #4ecdc4; }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="header">
-            <h1>🚀 Pump.fun Volume Analytics</h1>
-            <p>Live volume tracking with AI-powered analysis</p>
-            <div class="status-indicator">
-                <div class="status-dot"></div>
-                <span>Live Data Feed Active</span>
-            </div>
+            <h1>🚀 Pump.fun Analytics</h1>
+            <p>Fresh Start - Testing Setup</p>
         </div>
 
-        <div class="last-update" id="lastUpdate">
-            Last Update: Loading...
+        <div class="status">
+            <h3>System Status</h3>
+            <p id="status">Testing connections...</p>
         </div>
 
-        <div class="stats-grid" id="statsGrid">
-            <!-- Stats will be populated here -->
+        <div>
+            <button class="test-btn" onclick="testAPI()">Test API Connection</button>
+            <button class="test-btn" onclick="testTelegram()">Test Telegram Bot</button>
+            <button class="test-btn" onclick="testData()">Test Live Data</button>
+            <button class="test-btn" onclick="testScraper()">Test Web Scraper</button>
         </div>
 
-        <div class="charts-section">
-            <div class="chart-container">
-                <h3 class="chart-title">Volume Trend (24h)</h3>
-                <canvas id="volumeChart"></canvas>
-            </div>
-            <div class="chart-container">
-                <h3 class="chart-title">Trading Activity</h3>
-                <canvas id="tradingChart"></canvas>
-            </div>
-        </div>
-
-        <div class="ai-terminal">
-            <div class="terminal-header">
-                <div class="terminal-dots">
-                    <div class="dot red"></div>
-                    <div class="dot yellow"></div>
-                    <div class="dot green"></div>
-                </div>
-                <div class="terminal-title">AI Analytics Terminal</div>
-            </div>
-            <div class="terminal-body" id="terminalOutput">
-                <div class="terminal-output">
-                    <span class="terminal-prompt">pump.fun@analytics:~$</span> Welcome to Pump.fun AI Analytics Terminal
-                </div>
-                <div class="terminal-output">
-                    <span class="terminal-prompt">system:</span> Connected to live data feed. Type 'help' for commands.
-                </div>
-            </div>
-            <div class="terminal-input-container">
-                <span class="terminal-prompt">pump.fun@analytics:~$</span>
-                <input type="text" id="terminalInput" class="terminal-input" placeholder="Ask about trends, analysis, or predictions...">
-                <button class="send-btn" onclick="sendCommand()">Send</button>
-            </div>
-        </div>
+        <div id="results"></div>
     </div>
 
     <script>
-        let volumeData = {};
-        let volumeChart, tradingChart;
-
-        async function init() {
-            await fetchData();
-            updateStats();
-            createCharts();
-            startAutoRefresh();
-            addTerminalOutput('system:', 'Dashboard initialized with live data feed.');
+        async function testAPI() {
+            addResult('Testing API endpoint...', 'info');
+            try {
+                const response = await fetch('/api/test');
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('✅ API Working: ' + JSON.stringify(data), 'success');
+                } else {
+                    addResult('❌ API Error: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ API Failed: ' + error.message, 'error');
+            }
         }
 
-        async function fetchData() {
+        async function testTelegram() {
+            addResult('Testing Telegram bot...', 'info');
+            try {
+                const response = await fetch('https://api.telegram.org/bot7702215787:AAEhrAc1zEQd-C23VFcXh_IM7ze3-am7WJY/getMe');
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('✅ Telegram Bot Working: ' + data.result.first_name, 'success');
+                } else {
+                    addResult('❌ Telegram Error: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Telegram Failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testData() {
+            addResult('Testing live data feed...', 'info');
+            try {
+                const response = await fetch('/api/telegram-data');
+                if (response.ok) {
+                    const data = await response.json();
+                    addResult('✅ Live Data: ' + JSON.stringify(data), 'success');
+                } else {
+                    addResult('❌ Data Error: ' + response.status, 'error');
+                }
+            } catch (error) {
+                addResult('❌ Data Failed: ' + error.message, 'error');
+            }
+        }
+
+        async function testScraper() {
+            addResult('Testing web scraper...', 'info');
             try {
                 const response = await fetch('/api/scrape-channel');
                 if (response.ok) {
                     const data = await response.json();
-                    volumeData = data.volumeData;
-                    document.getElementById('lastUpdate').textContent = 
-                        `Last Update: ${new Date().toLocaleString()}`;
+                    addResult('✅ Scraper Working - Found ' + data.messagesFound + ' messages, ' + data.volumeReportsFound + ' volume reports', 'success');
+                    if (data.parsedData) {
+                        addResult('📊 Volume Data: ' + JSON.stringify(data.parsedData), 'success');
+                    }
+                } else {
+                    addResult('❌ Scraper Error: ' + response.status, 'error');
                 }
             } catch (error) {
-                console.error('Error fetching data:', error);
+                addResult('❌ Scraper Failed: ' + error.message, 'error');
             }
         }
 
-        function updateStats() {
-            const statsGrid = document.getElementById('statsGrid');
-            if (!volumeData.current) return;
-
-            const current = volumeData.current;
-            const changes = volumeData.changes;
-
-            const stats = [
-                {
-                    title: 'Total Volume',
-                    value: `${current.totalVolume.toLocaleString()} SOL`,
-                    change: changes.totalVolume,
-                    changeClass: changes.totalVolume.startsWith('+') ? 'positive' : 'negative'
-                },
-                {
-                    title: 'Buy Volume',
-                    value: `${current.buyVolume.toLocaleString()} SOL`,
-                    change: changes.buyVolume,
-                    changeClass: changes.buyVolume.startsWith('+') ? 'positive' : 'negative'
-                },
-                {
-                    title: 'Sell Volume',
-                    value: `${current.sellVolume.toLocaleString()} SOL`,
-                    change: changes.sellVolume,
-                    changeClass: changes.sellVolume.startsWith('+') ? 'positive' : 'negative'
-                },
-                {
-                    title: 'Total Trades',
-                    value: current.totalTrades.toLocaleString(),
-                    change: changes.totalTrades,
-                    changeClass: changes.totalTrades.startsWith('+') ? 'positive' : 'negative'
-                },
-                {
-                    title: 'New Coins',
-                    value: current.newCoins.toLocaleString(),
-                    change: changes.newCoins,
-                    changeClass: changes.newCoins.startsWith('+') ? 'positive' : 'negative'
-                },
-                {
-                    title: 'Reached KOTH',
-                    value: current.reachedKOTH.toLocaleString(),
-                    change: changes.reachedKOTH,
-                    changeClass: changes.reachedKOTH.startsWith('+') ? 'positive' : 'negative'
-                }
-            ];
-
-            statsGrid.innerHTML = stats.map(stat => `
-                <div class="stat-card">
-                    <div class="stat-title">${stat.title}</div>
-                    <div class="stat-value">${stat.value}</div>
-                    <div class="stat-change ${stat.changeClass}">
-                        ${stat.changeClass === 'positive' ? '↗' : '↘'} ${stat.change}
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        function createCharts() {
-            // Generate sample hourly data for demonstration
-            const hourlyData = [];
-            const now = new Date();
-            for (let i = 23; i >= 0; i--) {
-                const hour = new Date(now.getTime() - (i * 60 * 60 * 1000));
-                hourlyData.push({
-                    time: hour.getHours().toString().padStart(2, '0') + ':00',
-                    volume: Math.random() * 3000 + 12000,
-                    trades: Math.floor(Math.random() * 800 + 30000)
-                });
-            }
-
-            const ctx1 = document.getElementById('volumeChart').getContext('2d');
-            volumeChart = new Chart(ctx1, {
-                type: 'line',
-                data: {
-                    labels: hourlyData.map(d => d.time),
-                    datasets: [{
-                        label: 'Volume (SOL)',
-                        data: hourlyData.map(d => d.volume),
-                        borderColor: '#4ecdc4',
-                        backgroundColor: 'rgba(78, 205, 196, 0.1)',
-                        tension: 0.4,
-                        fill: true
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { labels: { color: '#fff' } } },
-                    scales: {
-                        x: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        y: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                    }
-                }
-            });
-
-            const ctx2 = document.getElementById('tradingChart').getContext('2d');
-            tradingChart = new Chart(ctx2, {
-                type: 'bar',
-                data: {
-                    labels: hourlyData.slice(-6).map(d => d.time),
-                    datasets: [{
-                        label: 'Total Trades',
-                        data: hourlyData.slice(-6).map(d => d.trades),
-                        backgroundColor: 'rgba(78, 205, 196, 0.8)',
-                        borderColor: '#4ecdc4',
-                        borderWidth: 1
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: { legend: { labels: { color: '#fff' } } },
-                    scales: {
-                        x: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } },
-                        y: { ticks: { color: '#fff' }, grid: { color: 'rgba(255,255,255,0.1)' } }
-                    }
-                }
-            });
-        }
-
-        function startAutoRefresh() {
-            setInterval(async () => {
-                await fetchData();
-                updateStats();
-            }, 60000); // Refresh every minute
-        }
-
-        function addTerminalOutput(type, message) {
-            const output = document.getElementById('terminalOutput');
+        function addResult(message, type) {
+            const results = document.getElementById('results');
             const div = document.createElement('div');
-            div.className = 'terminal-output';
-            div.innerHTML = `<span class="terminal-prompt">${type}</span> ${message}`;
-            output.appendChild(div);
-            output.scrollTop = output.scrollHeight;
+            div.className = `result ${type}`;
+            div.textContent = new Date().toLocaleTimeString() + ' - ' + message;
+            results.insertBefore(div, results.firstChild);
         }
 
-        async function sendCommand() {
-            const input = document.getElementById('terminalInput');
-            const command = input.value.trim();
-            if (!command) return;
-
-            addTerminalOutput('user:', command);
-            input.value = '';
-
-            if (command.toLowerCase() === 'help') {
-                addTerminalOutput('system:', `Available commands:
-- help: Show this help
-- stats: Current volume statistics
-- trend: Analyze trends
-- ratio: Buy/sell ratio analysis
-- Ask any question about the data!`);
-            } else if (command.toLowerCase() === 'stats') {
-                const current = volumeData.current;
-                if (current) {
-                    addTerminalOutput('system:', `Current Stats:
-• Total Volume: ${current.totalVolume.toLocaleString()} SOL
-• Buy/Sell Ratio: ${(current.buyVolume/current.sellVolume).toFixed(2)}:1
-• Success Rate: ${(current.reachedKOTH/current.newCoins*100).toFixed(1)}% KOTH
-• Market Activity: ${current.totalTrades > 30000 ? 'High' : 'Moderate'}`);
-                }
-            } else if (command.toLowerCase() === 'trend') {
-                addTerminalOutput('system:', `Trend Analysis:
-• Volume: ${volumeData.changes.totalVolume} (Strong ${volumeData.changes.totalVolume.startsWith('+') ? 'growth' : 'decline'})
-• New Tokens: ${volumeData.changes.newCoins}
-• KOTH Success: ${volumeData.changes.reachedKOTH} (${volumeData.changes.reachedKOTH.startsWith('+') ? 'Improving' : 'Declining'} success rate)`);
-            } else {
-                addTerminalOutput('ai:', `I can analyze the current pump.fun data: ${current ? `Volume at ${current.totalVolume.toLocaleString()} SOL with ${current.totalTrades.toLocaleString()} trades. ${volumeData.changes.totalVolume.startsWith('+') ? 'Positive momentum' : 'Declining activity'} in the market.` : 'Data loading...'}`);
-            }
-        }
-
-        document.getElementById('terminalInput').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') sendCommand();
-        });
-
-        init();
+        // Test on page load
+        window.onload = function() {
+            testTelegram();
+        };
     </script>
 </body>
 </html>
