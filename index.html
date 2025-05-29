@@ -627,9 +627,11 @@ connected to live data feed. ask me about volume trends, market analysis, or pre
             sendButton.disabled = true;
             sendButton.textContent = 'thinking...';
 
-            setTimeout(() => {
-                if (command.toLowerCase() === 'help') {
-                    addMessage('assistant', `available commands:
+            const lowerCommand = command.toLowerCase();
+            
+            // Handle built-in commands locally
+            if (lowerCommand === 'help') {
+                addMessage('assistant', `available commands:
 help - show commands
 stats - current volume statistics  
 trend - market trend analysis
@@ -638,21 +640,70 @@ status - system status
 clear - clear terminal
 
 you can also ask questions about pump.fun data`);
-                } else if (command.toLowerCase() === 'clear') {
-                    document.getElementById('terminalOutput').innerHTML = `
-                        <div class="message system">
-                            <div class="message-header">
-                                <div class="message-avatar system-avatar">SYS</div>
-                                <span>system</span>
-                                <span>${new Date().toLocaleTimeString()}</span>
-                            </div>
-                            <div class="message-content">terminal cleared</div>
+                sendButton.disabled = false;
+                sendButton.textContent = 'send';
+                return;
+            } 
+            
+            if (lowerCommand === 'clear') {
+                document.getElementById('terminalOutput').innerHTML = `
+                    <div class="message system">
+                        <div class="message-header">
+                            <div class="message-avatar system-avatar">SYS</div>
+                            <span>system</span>
+                            <span>${new Date().toLocaleTimeString()}</span>
                         </div>
-                    `;
-                } else if (command.toLowerCase() === 'stats') {
-                    const current = volumeData.current;
-                    if (current) {
-                        const stats = `current volume statistics:
+                        <div class="message-content">terminal cleared</div>
+                    </div>
+                `;
+                sendButton.disabled = false;
+                sendButton.textContent = 'send';
+                return;
+            }
+
+            // For all other commands, use Anthropic AI
+            try {
+                const response = await fetch('/api/ai-analysis', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        query: command,
+                        currentData: volumeData.current,
+                        previousData: volumeData.previous,
+                        hourlyData: []
+                    })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    addMessage('assistant', data.response);
+                } else {
+                    // Fallback to local analysis if API fails
+                    const fallbackResponse = getFallbackResponse(command, volumeData.current);
+                    addMessage('assistant', fallbackResponse);
+                }
+            } catch (error) {
+                console.error('AI API error:', error);
+                // Fallback to local analysis
+                const fallbackResponse = getFallbackResponse(command, volumeData.current);
+                addMessage('assistant', fallbackResponse);
+            }
+            
+            sendButton.disabled = false;
+            sendButton.textContent = 'send';
+        }
+
+        function getFallbackResponse(command, current) {
+            const lowerCommand = command.toLowerCase();
+            
+            if (!current) {
+                return 'no live data available. forward a volume report to your bot for analysis.';
+            }
+
+            if (lowerCommand === 'stats') {
+                return `current volume statistics:
 total volume: ${current.totalVolume?.toLocaleString() || '0'} sol
 buy volume: ${current.buyVolume?.toLocaleString() || '0'} sol
 sell volume: ${current.sellVolume?.toLocaleString() || '0'} sol
@@ -663,21 +714,55 @@ fully bonded: ${current.fullyBonded?.toLocaleString() || '0'}
 
 buy/sell ratio: ${current.buyVolume && current.sellVolume ? (current.buyVolume/current.sellVolume).toFixed(2) : 'n/a'}:1
 success rate: ${current.reachedKOTH && current.newCoins ? (current.reachedKOTH/current.newCoins*100).toFixed(1) : 'n/a'}%`;
-                        addMessage('assistant', stats);
-                    } else {
-                        addMessage('assistant', 'no volume data available. forward a volume report to your bot.');
-                    }
+            }
+            
+            if (lowerCommand === 'trend') {
+                const changes = current.changes || {};
+                return `market trend analysis:
+volume trend: ${changes.volumeChange || 'n/a'}
+trading activity: ${changes.tradesChange || 'n/a'}
+new token creation: ${changes.coinsChange || 'n/a'}
+koth success: ${changes.kothChange || 'n/a'}
+
+market sentiment: ${changes.volumeChange?.startsWith('+') ? 'bullish' : 'bearish'}
+activity level: ${current.totalTrades > 30000 ? 'high' : 'moderate'}`;
+            }
+            
+            if (lowerCommand === 'ratio') {
+                if (current.buyVolume && current.sellVolume) {
+                    const ratio = (current.buyVolume / current.sellVolume).toFixed(2);
+                    const buyPercent = (current.buyVolume / (current.buyVolume + current.sellVolume) * 100).toFixed(1);
+                    return `buy/sell ratio analysis:
+buy volume: ${current.buyVolume.toLocaleString()} sol (${buyPercent}%)
+sell volume: ${current.sellVolume.toLocaleString()} sol (${(100 - parseFloat(buyPercent)).toFixed(1)}%)
+ratio: ${ratio}:1
+
+market sentiment: ${parseFloat(ratio) > 1 ? 'bullish (more buying)' : 'bearish (more selling)'}
+pressure: ${parseFloat(buyPercent) > 60 ? 'strong buy pressure' : parseFloat(buyPercent) < 40 ? 'strong sell pressure' : 'balanced'}`;
                 } else {
-                    addMessage('assistant', `analyzing "${command}"...
-
-${volumeData.current ? `market shows ${volumeData.current.totalVolume?.toLocaleString()} sol volume with ${volumeData.current.totalTrades?.toLocaleString()} trades. ${volumeData.current.changes?.volumeChange?.startsWith('+') ? 'volume trending up' : 'market activity moderate'}.` : 'forward volume report to bot for live analysis'}
-
-what specific aspect would you like analyzed?`);
+                    return 'no buy/sell volume data available';
                 }
-                
-                sendButton.disabled = false;
-                sendButton.textContent = 'send';
-            }, 1000);
+            }
+            
+            if (lowerCommand === 'status') {
+                return `system status:
+data source: ${current ? 'live telegram feed' : 'no data'}
+last update: ${current.timestamp ? new Date(current.timestamp).toLocaleString() : 'never'}
+connection: ${current ? 'active' : 'waiting for data'}
+
+to get live data: forward volume reports from @pumpfunvolumereports to your bot`;
+            }
+
+            // Generic fallback
+            return `analyzing your question about pump.fun data...
+
+current market state:
+total volume: ${current.totalVolume?.toLocaleString() || '0'} sol
+total trades: ${current.totalTrades?.toLocaleString() || '0'}
+market trend: ${current.changes?.volumeChange?.startsWith('+') ? 'positive' : 'moderate'}
+
+ai analysis temporarily unavailable - using local analysis.
+ask specific questions like "stats", "trend", or "ratio" for detailed data.`;
         }
 
         document.getElementById('terminalInput').addEventListener('keypress', function(e) {
