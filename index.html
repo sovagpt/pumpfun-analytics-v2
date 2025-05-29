@@ -320,6 +320,175 @@
                 grid-template-columns: 1fr;
             }
         }
+
+        /* Features Section */
+        .features-section {
+            margin: 80px 0;
+        }
+
+        .section-title {
+            font-size: 2.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-bottom: 50px;
+            color: #ffffff;
+        }
+
+        .features-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .feature-card {
+            background-color: #1a1a2e;
+            border: 1px solid #2d2d3a;
+            border-radius: 12px;
+            padding: 30px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .feature-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-5px);
+        }
+
+        .feature-number {
+            color: #00ff88;
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin-bottom: 15px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .feature-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            font-size: 0.95rem;
+        }
+
+        /* Security Section */
+        .security-section {
+            margin: 80px 0;
+        }
+
+        .security-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 30px;
+        }
+
+        .security-card {
+            background-color: #1a1a2e;
+            border: 1px solid #2d2d3a;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .security-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-5px);
+        }
+
+        .security-icon {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+        }
+
+        .security-title {
+            font-size: 1.2rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 15px;
+        }
+
+        .security-description {
+            color: #a0a0a0;
+            line-height: 1.6;
+            font-size: 0.9rem;
+        }
+
+        /* Ecosystem Section */
+        .ecosystem-section {
+            margin: 80px 0;
+        }
+
+        .ecosystem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .ecosystem-card {
+            background-color: #1a1a2e;
+            border: 1px solid #2d2d3a;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .ecosystem-card:hover {
+            border-color: #00ff88;
+            transform: translateY(-5px);
+        }
+
+        .ecosystem-icon {
+            font-size: 2rem;
+            margin-bottom: 15px;
+        }
+
+        .ecosystem-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 12px;
+        }
+
+        .ecosystem-description {
+            color: #a0a0a0;
+            line-height: 1.5;
+            font-size: 0.85rem;
+            margin-bottom: 15px;
+        }
+
+        .ecosystem-badge {
+            display: inline-block;
+            background-color: #00ff88;
+            color: #000000;
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+
+        /* Footer */
+        .footer {
+            margin-top: 80px;
+            padding: 25px 0;
+            border-top: 1px solid #2d2d3a;
+            background-color: #1a1a2e;
+        }
+
+        .footer-content {
+            text-align: center;
+        }
+
+        .footer-content p {
+            color: #a0a0a0;
+            font-size: 0.9rem;
+        }
     </style>
 </head>
 <body>
@@ -373,6 +542,112 @@ connected to live data feed. ask me about volume trends, market analysis, or pre
                 <button class="send-button" onclick="sendCommand()" id="sendButton">send</button>
             </div>
         </div>
+
+        <!-- Features Section -->
+        <div class="features-section">
+            <h2 class="section-title">features</h2>
+            
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-number">01</div>
+                    <h3 class="feature-title">real-time volume tracking</h3>
+                    <p class="feature-description">volumepump analytics delivers instant volume tracking with 99.99% uptime. our advanced monitoring system captures every transaction, providing traders with accurate, live data to make informed decisions in the fast-moving pump.fun ecosystem.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-number">02</div>
+                    <h3 class="feature-title">accurate data logging</h3>
+                    <p class="feature-description">precision-engineered data collection ensures every trade, volume spike, and market movement is recorded with mathematical accuracy. our redundant systems guarantee data integrity, giving you the reliable analytics foundation needed for successful trading.</p>
+                </div>
+                
+                <div class="feature-card">
+                    <div class="feature-number">03</div>
+                    <h3 class="feature-title">ai-powered insights</h3>
+                    <p class="feature-description">leverage advanced artificial intelligence to analyze market patterns, predict volume trends, and identify profitable opportunities. our ai terminal provides instant market analysis, trend predictions, and strategic recommendations based on live data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Security Methods Section -->
+        <div class="security-section">
+            <h2 class="section-title">security methods</h2>
+            
+            <div class="security-grid">
+                <div class="security-card">
+                    <div class="security-icon">
+                        <span>🔐</span>
+                    </div>
+                    <h3 class="security-title">secure data encryption</h3>
+                    <p class="security-description">volumepump employs military-grade encryption protocols to protect all user data and trading information. your analytics data, api keys, and trading preferences are secured using industry-standard encryption methods, ensuring complete privacy and data integrity.</p>
+                </div>
+                
+                <div class="security-card">
+                    <div class="security-icon">
+                        <span>🛡️</span>
+                    </div>
+                    <h3 class="security-title">multi-layer authentication</h3>
+                    <p class="security-description">enhanced security through multi-factor authentication systems. our platform implements advanced verification protocols to protect against unauthorized access, ensuring only verified users can access premium analytics and trading features.</p>
+                </div>
+                
+                <div class="security-card">
+                    <div class="security-icon">
+                        <span>🔍</span>
+                    </div>
+                    <h3 class="security-title">continuous monitoring</h3>
+                    <p class="security-description">24/7 security monitoring and regular vulnerability assessments ensure platform integrity. we maintain constant vigilance against threats, implementing real-time security updates and patches to protect user assets and data.</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Ecosystem Section -->
+        <div class="ecosystem-section">
+            <h2 class="section-title">ecosystem</h2>
+            
+            <div class="ecosystem-grid">
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">
+                        <span>🤖</span>
+                    </div>
+                    <h3 class="ecosystem-title">volumepump.fun trading bot</h3>
+                    <p class="ecosystem-description">advanced ai-powered trading bot with sophisticated algorithms designed to give traders the upper hand in pump.fun markets. features include automated sniping, volume analysis, and intelligent trade execution.</p>
+                    <div class="ecosystem-badge">token gated at 100,000 $VOLUME</div>
+                </div>
+                
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">
+                        <span>⚡</span>
+                    </div>
+                    <h3 class="ecosystem-title">lightning-fast sniping</h3>
+                    <p class="ecosystem-description">execute trades with millisecond precision using our high-speed sniping technology. our bot monitors new token launches and volume spikes, automatically executing optimal entry and exit strategies.</p>
+                    <div class="ecosystem-badge">premium feature</div>
+                </div>
+                
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">
+                        <span>🧠</span>
+                    </div>
+                    <h3 class="ecosystem-title">advanced ai systems</h3>
+                    <p class="ecosystem-description">proprietary machine learning algorithms analyze market patterns, predict price movements, and optimize trading strategies. our ai continuously learns from market data to improve performance and profitability.</p>
+                    <div class="ecosystem-badge">ai-powered</div>
+                </div>
+                
+                <div class="ecosystem-card">
+                    <div class="ecosystem-icon">
+                        <span>📊</span>
+                    </div>
+                    <h3 class="ecosystem-title">market intelligence</h3>
+                    <p class="ecosystem-description">comprehensive market analysis tools providing deep insights into pump.fun ecosystem trends, volume patterns, and profitable opportunities. real-time data feeds power intelligent trading decisions.</p>
+                    <div class="ecosystem-badge">data-driven</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <div class="footer-content">
+                <p>&copy; 2025 volumepump.fun - developer@volumepump.fun</p>
+            </div>
+        </footer>
     </div>
 
     <script>
