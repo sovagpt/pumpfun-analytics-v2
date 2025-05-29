@@ -110,6 +110,12 @@
             color: #00ff88;
         }
 
+        .stat-icon img {
+            width: 20px;
+            height: 20px;
+            object-fit: contain;
+        }
+
         .stat-title {
             font-size: 0.9rem;
             color: #a0a0a0;
@@ -707,63 +713,63 @@ connected to live data feed. ask me about volume trends, market analysis, or pre
                     title: 'total volume',
                     value: `${current.totalVolume?.toLocaleString() || '0'} SOL`,
                     change: changes.volumeChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f190c8d2547b132889_33.png',
                     changeClass: (changes.volumeChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'buy volume',
                     value: `${current.buyVolume?.toLocaleString() || '0'} SOL`,
                     change: changes.buyChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f19cfd8fb0a87cfc49_d.png',
                     changeClass: (changes.buyChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'sell volume',
                     value: `${current.sellVolume?.toLocaleString() || '0'} SOL`,
                     change: changes.sellChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f1ee461aa2920eedd0_s.png',
                     changeClass: (changes.sellChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'total trades',
                     value: current.totalTrades?.toLocaleString() || '0',
                     change: changes.tradesChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f10bcfe07db2c399fe_44.png',
                     changeClass: (changes.tradesChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'new coins',
                     value: current.newCoins?.toLocaleString() || '0',
                     change: changes.coinsChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f26bc543b6e36f49a8_444%20(1).png',
                     changeClass: (changes.coinsChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'total buys',
                     value: current.totalBuys?.toLocaleString() || '0',
                     change: changes.buysChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7ab5147732db9864c44_shopping-cart-3d-shopping-cart-icon-3d-shopping-cart-symbol-free-png.webp',
                     changeClass: (changes.buysChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'total sells',
                     value: current.totalSells?.toLocaleString() || '0',
                     change: changes.sellsChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f1b059003bdf6f47a5_4444.png',
                     changeClass: (changes.sellsChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'reached koth',
                     value: current.reachedKOTH?.toLocaleString() || '0',
                     change: changes.kothChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7ab68f5e55e0f760750_c3867bc48e58c351c994b7f558f9ddd4.png',
                     changeClass: (changes.kothChange?.startsWith('+')) ? 'positive' : 'negative'
                 },
                 {
                     title: 'fully bonded',
                     value: current.fullyBonded?.toLocaleString() || '0',
                     change: changes.bondedChange || '+0.00%',
-                    icon: 'PLACEHOLDER',
+                    icon: 'https://cdn.prod.website-files.com/6740d85c4e3daeef29a89470/6837a7f2417023e6cb6c8923_444%20(2).png',
                     changeClass: (changes.bondedChange?.startsWith('+')) ? 'positive' : 'negative'
                 }
             ];
@@ -771,7 +777,7 @@ connected to live data feed. ask me about volume trends, market analysis, or pre
             statsGrid.innerHTML = stats.map(stat => `
                 <div class="stat-card">
                     <div class="stat-header">
-                        <div class="stat-icon">${stat.icon}</div>
+                        <div class="stat-icon"><img src="${stat.icon}" alt="${stat.title}" /></div>
                         <div class="stat-title">${stat.title}</div>
                     </div>
                     <div class="stat-value">${stat.value}</div>
